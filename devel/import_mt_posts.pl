@@ -33,7 +33,7 @@ if(my $ufn = $ARGV[1]) {
     die "Bad status '$status'" unless ($status eq 'Enabled' || $status eq 'Disabled');
     
     my $data = {
-      enabled  => $status eq 'Enabled' ? 1 : 0,
+      disabled  => $status eq 'Enabled' ? 0 : 1,
       username => $username,
       display  => $display,
       roles    => \@lines
@@ -97,7 +97,7 @@ for my $post (@posts) {
     ->find_or_create({
       username => $username,
       full_name => $author->{display} || $username,
-      author => 1, admin => 0, comment => 1
+      author => 1, admin => 0, comment => 1, disabled => 0
     },{ key => 'username_unique' }) and print '.';
 }
 
@@ -210,7 +210,7 @@ sub _get_comment_author {
           username => $username,
           full_name => $author,
           email => $comment->{EMAIL},
-          author => 0, admin => 0, comment => 1
+          author => 0, admin => 0, comment => 1, disabled => 0
         },{ key => 'username_unique' })
     }
     catch { warn RED . $_ . CLEAR };
