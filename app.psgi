@@ -2,6 +2,7 @@
 
 use Rapi::Blog 1.1001;
 use RapidApp::Util ':all';
+use Plack::Builder;
 
 use Path::Class qw/file dir/;
 my $dir = file($0)->parent->stringify;
@@ -37,5 +38,56 @@ my $app = Rapi::Blog->new({
   %$local_cfg
 });
 
-# Plack/PSGI app:
-$app->to_app
+my $base_appname = $app->base_appname;
+
+
+# ------------------------------------
+#Old site URL mapping Middleware:
+my $old_url_mw = sub {
+  my $app = shift;
+  sub {
+    my $env = shift;
+    
+    my ($junk,$year,$month,$title) = split(/\//,$env->{PATH_INFO},4);
+    
+    if ($year =~ /^\d{4}$/ and $month =~ /^\d{2}$/) {
+      my $dt = DateTime->new( 
+        year      => $year, 
+        month     => $month, 
+        day       => 1,
+        hour      => 0,
+        minute    => 0,
+        second    => 0,
+        time_zone => 'local'
+      );
+      
+      my $max_dt = $dt->clone->add(months => 1);
+      
+      my $high = join(' ',$max_dt->ymd('-'),$max_dt->hms(':'));
+      my $low  = join(' ',$dt->ymd('-'),$dt->hms(':'));
+      $title =~ s/\.\W$//;
+      $title =~ s/\-/\_/g;
+
+      my $Rs = $base_appname->model('DB::Post')
+        ->search_rs({ -and => [
+          { ts   => { '>=' => $low    }},
+          { ts   => { '<'  => $high   }},
+          { name => { '='  => $title  }}
+        ]});
+
+      if(my $Match = $Rs->first) {
+        return [ 307 => ['Location' => $Match->public_url], [ ] ] 
+      }
+    }
+    
+   $app->($env);
+  };
+}; 
+# ------------------------------------
+
+
+builder {
+  enable $old_url_mw;
+  $app;
+}
+   
