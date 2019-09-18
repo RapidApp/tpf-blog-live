@@ -9,6 +9,12 @@ use Path::Class qw/file dir/;
 our $NextColor  = GREEN.BOLD;
 our $ScreamNext = 0;
 
+my %counts = ( 
+  existing_posts     => 0, 
+  created_posts      => 0, 
+  existsing_comments => 0, 
+  created_comments   => 0 
+);
 
 my $fn = $ARGV[0] or die "must supply filename as first argument.\n";
 
@@ -84,7 +90,7 @@ my $cRs = $Blog->base_appname->model('DB::Comment');
 
 # must pre-create authors to prevent the chance of them being seen on a comment 
 # before created as an author
-print "\n Creating authors ";
+print "\n Creating/verifying authors ";
 for my $post (@posts) {
 
   my $author = $post->{_meta}{author} or next;
@@ -152,8 +158,8 @@ for my $post (@posts) {
   my $Post;
   my $post_id;
   try {
-    $Post = $Rs->search_rs({ 'me.name' => $name })->first and print "exists";
-    $Post = $Rs->create($packet) and print "created" unless ($Post);
+    $Post = $Rs->search_rs({ 'me.name' => $name })->first and print "exists" and $counts{existing_posts}++;
+    $Post = $Rs->create($packet) and print "created" and $counts{created_posts}++ unless ($Post);
     $post_id = $Post->get_column('id');
   }
   catch { warn RED.BOLD . $_ . CLEAR };
@@ -173,11 +179,11 @@ for my $post (@posts) {
     
     if ($cRs->search_rs($cPacket)->first) {
       # comment already exists
-      print " -";
+      print " -" and $counts{existing_comments}++;
     }
     else {
       # new comment
-      $cRs->create($cPacket) and print " .";
+      $cRs->create($cPacket) and print " ." and $counts{created_comments}++;
     }
   }
 
@@ -185,6 +191,15 @@ for my $post (@posts) {
 
 }
 
+
+print "\n\n\nSummary:\n\n";
+
+print "           Existing Posts: $counts{existing_posts}\n";
+print "        Newly Added Posts: $counts{created_posts}\n";
+print "        Existing Comments: $counts{existing_comments}\n";
+print "     Newly Added Comments: $counts{created_comments}\n";
+
+print "\n";
 
 
 ########################################################################################################
