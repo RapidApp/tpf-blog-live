@@ -17,8 +17,8 @@ view_wrappers:
 ##
 
 # Remove any of the following params to prevent them from displaying at all:
-title          : TPF demo blog
-subtitle       : Initial Rapi::Blog demo for TPF
+title          : The Perl Foundation News
+subtitle       : Official Blog of The Perl Foundation (TPF)
 sidebar_blurb  : private/sidebar_blurb.html
 sidebar_bottom : private/sidebar_bottom.html
 
