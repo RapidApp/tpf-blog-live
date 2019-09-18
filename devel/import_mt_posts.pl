@@ -152,7 +152,8 @@ for my $post (@posts) {
   my $Post;
   my $post_id;
   try {
-    $Post = $Rs->create($packet) and print "created";
+    $Post = $Rs->search_rs({ 'me.name' => $name })->first and print "exists";
+    $Post = $Rs->create($packet) and print "created" unless ($Post);
     $post_id = $Post->get_column('id');
   }
   catch { warn RED.BOLD . $_ . CLEAR };
@@ -162,12 +163,22 @@ for my $post (@posts) {
   for my $comment (@{$post->{_meta}{comments} || []}) {
     my $User = &_get_comment_author($comment) or die "failed to get comment author";
     my $uid = $User->get_column('id');
-    $cRs->create({
+    
+    my $cPacket = {
       user_id => $uid,
       post_id => $post_id,
       ts => $comment->{_meta}{ts},
       body => $comment->{CommentBody}
-    }) and print " .";
+    };
+    
+    if ($cRs->search_rs($cPacket)->first) {
+      # comment already exists
+      print " -";
+    }
+    else {
+      # new comment
+      $cRs->create($cPacket) and print " .";
+    }
   }
 
 
