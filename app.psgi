@@ -50,6 +50,10 @@ my $old_url_mw = sub {
     
     my ($junk,$year,$month,$title) = split(/\//,$env->{PATH_INFO},4);
     
+    # strip file extension (3 or 4 characters long), if present:
+    $title =~ s/\..{3}$//;
+    $title =~ s/\..{4}$//;
+    
     if ($year =~ /^\d{4}$/ and $month =~ /^\d{2}$/) {
       my $dt = DateTime->new( 
         year      => $year, 
