@@ -273,7 +273,10 @@ sub _parse_chunk {
     # simulate ML format for next pass (fwiw, this is terrible, but i'm lazy)
     if ($comment_chunk && $k eq 'DATE') {
       pop @lines while (! $lines[-1] || $lines[-1] eq '-----');
-      @lines = ('-----','CommentBody:',@lines)
+      @lines = (
+        '-----','CommentBody:',
+        map { $_ . '<br>' } @lines
+      )
     }
 
 
@@ -302,7 +305,6 @@ sub _meta_normalize {
   
   if (my $comments = $data->{COMMENT}) {
     $comments = [$comments] unless (ref($comments));
-    $_ =~ s/\n/\<br\>\n/g for @$comments;
     $meta->{comments} = [ map { &_parse_chunk($_,1) } @$comments ];
   }
   
