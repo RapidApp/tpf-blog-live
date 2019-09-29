@@ -12,7 +12,7 @@ our $ScreamNext = 0;
 my %counts = ( 
   existing_posts     => 0, 
   created_posts      => 0, 
-  existsing_comments => 0, 
+  existing_comments  => 0, 
   created_comments   => 0 
 );
 
@@ -57,7 +57,7 @@ if(my $ufn = $ARGV[1]) {
 
 
 
-my @chunks = split(/\n-{8}\n/,scalar $File->slurp);
+my @chunks = split(/-{5}\n-{8}\n/,scalar $File->slurp);
 print scalar(@chunks) . " chunks\n";
 
 
