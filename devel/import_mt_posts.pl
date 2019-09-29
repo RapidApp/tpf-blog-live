@@ -302,6 +302,7 @@ sub _meta_normalize {
   
   if (my $comments = $data->{COMMENT}) {
     $comments = [$comments] unless (ref($comments));
+    $_ =~ s/\n/\<br\>\n/g for @$comments;
     $meta->{comments} = [ map { &_parse_chunk($_,1) } @$comments ];
   }
   
