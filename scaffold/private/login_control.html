@@ -1,5 +1,8 @@
 [%- IF User -%]
- <i class="fa fa-user"></i>&nbsp;[% User.username %] 
+ <i class="fa fa-user"></i>&nbsp;
+   <a style="color:#555;" 
+      href="[% mount_url %]/adm/#![% mount_url %]/adm/main/db/db_user/item/[% User.id %]"
+    >[% User.username %]</a>
  | <a class="blog-nav-item" target="_top" href="[% mount_url %]/auth/logout_to_referer">
      Sign out&nbsp;<i class="fa fa-sign-out"></i>
    </a>
