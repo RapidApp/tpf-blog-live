@@ -1,0 +1,21 @@
+[%- USE date(format = '%a, %d %b %Y %H:%M:%S %Z') -%]
+[%- SET 
+ result = list_posts({ limit => 20 })
+ posts  = result.rows
+-%]
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>[% scaffold.title %]</title>
+    <link>[% accessed_site %]/</link>
+    <description>[% scaffold.subtitle %]</description>
+    [%- FOREACH Post IN posts -%]
+      <item>
+        <title>[% Post.title %]</title>
+        <link>[% accessed_site %][%- mount_url -%]/post/[% Post.name %]</link>
+        <description>[% Post.summary %]</description>
+        <pubDate>[% date.format(Post.ts) %]</pubDate>
+      </item>
+    [%- END -%]
+  </channel>
+</rss>

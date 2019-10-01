@@ -1,5 +1,5 @@
 [% DEFAULT
-  title = 'Rapi::Blog'
+  title = scaffold.title || 'TPF'
 -%]
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +10,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
+    <link href="[%- mount_url -%]/rss.xml" rel="alternate" type="application/rss+xml" title="[% title %]" />
     <link rel="icon" href="[%- mount_url -%]/img/favicon.ico">
 
     <!-- [%#  
