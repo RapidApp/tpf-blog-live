@@ -31,7 +31,7 @@ edit_post_link : 1
 # The pages are used to build the navigation header
 pages : 
   - { title: Home,        path: /            }
-  - { title: List,        path: /list        }
+  - { title: Posts,       path: /list        }
   - { title: Tags,        path: /tags        }
   - { title: Categories,  path: /categories  }
   - { title: Authors,     path: /authors     }
