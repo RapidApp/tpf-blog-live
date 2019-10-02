@@ -57,7 +57,7 @@ if(my $ufn = $ARGV[1]) {
 
 
 
-my @chunks = split(/-{5}\n-{8}\n/,scalar $File->slurp);
+my @chunks = split(/-{5}\n-{8}\n/,scalar $File->slurp(iomode => '<:encoding(UTF-8)'));
 print scalar(@chunks) . " chunks\n";
 
 
@@ -117,6 +117,10 @@ for my $post (@posts) {
   
   my $title = $post->{TITLE} || $name;
   my $body = $post->{BODY} or next;
+  
+  $body .= "\n" . $post->{'EXTENDED BODY'} if ($post->{'EXTENDED BODY'});
+  my $published = 1;
+  $published = 0 if ($post->{STATUS} && ($post->{STATUS} =~ /Draft/i));
 
   my $ts = $post->{_meta}{ts} or next;
   my $author = $post->{_meta}{author} or next;
@@ -136,7 +140,7 @@ for my $post (@posts) {
     creator_id => $uid,
     updater_id => $uid,
     body => $body,
-    published => 1,
+    published => $published,
     ts => $ts
   };
   
