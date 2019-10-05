@@ -1,6 +1,6 @@
 # created by 'rabl.pl create'
 
-use Rapi::Blog 1.1004;
+use Rapi::Blog 1.1100;
 use RapidApp::Util ':all';
 use Plack::Builder;
 
