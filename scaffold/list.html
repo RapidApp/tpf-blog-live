@@ -101,7 +101,7 @@
                 </td>
               [% END %]
               <td>
-                [% Post.summary %] ... <a href="[%- mount_url -%]/post/[% Post.name %]">read more</a> 
+                [% ppRender.TextMarkdown(Post.summary) %] ... <a href="[%- mount_url -%]/post/[% Post.name %]">read more</a> 
               </td>
             </tr></table>
             
