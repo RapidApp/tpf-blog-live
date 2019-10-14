@@ -13,7 +13,7 @@
       <item>
         <title>[% Post.title %]</title>
         <link>[% accessed_site %][%- mount_url -%]/post/[% Post.name %]</link>
-        <description>[% Post.summary %]</description>
+        <description>[% ppRender.TextMarkdown(Post.summary) %]</description>
         <pubDate>[% date.format(Post.ts) %]</pubDate>
       </item>
     [%- END -%]
