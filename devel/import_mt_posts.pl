@@ -111,19 +111,21 @@ print "\n\n";
 
 for my $post (@posts) {
   print "\n";
-  my $name = $post->{BASENAME} or next;
+  my $name = $post->{BASENAME} or warn "no basename" and next;
   
   print "  $name  ...  ";
   
   my $title = $post->{TITLE} || $name;
-  my $body = $post->{BODY} or next;
+  $post->{BODY} || $post->{'EXTENDED BODY'} or warn "no body or extended body" and next;
+  
+  my $body = $post->{BODY} ||'';
   
   $body .= "\n" . $post->{'EXTENDED BODY'} if ($post->{'EXTENDED BODY'});
   my $published = 1;
   $published = 0 if ($post->{STATUS} && ($post->{STATUS} =~ /Draft/i));
 
-  my $ts = $post->{_meta}{ts} or next;
-  my $author = $post->{_meta}{author} or next;
+  my $ts = $post->{_meta}{ts} or warn "no ts" and next;
+  my $author = $post->{_meta}{author} or warn "no author" and next;
   
   my $username = lc($author->{username});
   $username =~ s/\s//g;
