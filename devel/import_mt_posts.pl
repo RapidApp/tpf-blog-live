@@ -99,12 +99,23 @@ for my $post (@posts) {
   $username =~ s/\s//g;
   $username =~ s/\W/_/g;
 
-  my $User = $Blog->base_appname->model('DB::User')
-    ->find_or_create({
-      username => $username,
-      full_name => $author->{display} || $username,
-      author => 1, admin => 0, comment => 1, disabled => 0
-    },{ key => 'username_unique' }) and print '.';
+  my $User;
+  
+  try {
+    $User = 
+      $uRs->search_rs({ username => $username })->first ||
+      $uRs->search_rs({ full_name => $author->{display} || $username })->first ||
+      $uRs->find_or_create({
+        username => $username,
+        full_name => $author->{display} || $username,
+        author => 1, admin => 0, comment => 1, disabled => 0
+      },{ key => 'username_unique' }) and print '.';
+  }
+  catch {
+    warn "Failure on '$username'/'$author->{display}'\n\n";
+    die $_
+  
+  };
 }
 
 print "\n\n";
@@ -131,7 +142,10 @@ for my $post (@posts) {
   $username =~ s/\s//g;
   $username =~ s/\W/_/g;
   
-  my $User = $uRs->search_rs({ 'me.username' => $username })->first or die "user not exist";
+  my $User = $uRs->search_rs({ -or => [
+    { 'me.username' => $username },
+    { 'me.full_name' => $author->{display} }
+  ]})->first or die "user not exist";
 
   my $uid = $User->id;
 
